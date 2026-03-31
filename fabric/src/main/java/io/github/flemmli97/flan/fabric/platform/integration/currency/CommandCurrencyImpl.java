@@ -30,22 +30,22 @@ public class CommandCurrencyImpl implements CommandCurrency {
         if (common != -1)
             return common == 1;
         if (Flan.octoEconomy) {
-            PlayerClaimData data = PlayerClaimData.get(player);
-            if (data.getAdditionalClaims() - Math.max(0, data.usedClaimBlocks() - data.getClaimBlocks()) < blocks) {
-                message.accept(ClaimUtils.translatedText("flan.sellFail", ChatFormatting.DARK_RED));
-                return false;
-            }
-            Currency currency = OctoEconomy.getInstance().getCurrentEconomy().getCurrency(EIGHTY_ECONOMY_CURRENCY_NAME);
-            if (currency == null) {
-                message.accept(ClaimUtils.translatedText("flan.currencyMissing", ChatFormatting.DARK_RED));
-                return false;
-            }
-            UniqueUser user = OctoEconomy.getInstance().getCurrentEconomy()
-                    .getOrCreatePlayerAccount(player.getUUID());
-            double price = blocks * value;
-            user.depositMoney(currency, price, "flan.claimblocks.sell");
-            data.setAdditionalClaims(data.getAdditionalClaims() - blocks);
-            message.accept(ClaimUtils.translatedText("flan.sellSuccess", blocks, price, ChatFormatting.GOLD));
+//            PlayerClaimData data = PlayerClaimData.get(player);
+//            if (data.getAdditionalClaims() - Math.max(0, data.usedClaimBlocks() - data.getClaimBlocks()) < blocks) {
+//                message.accept(ClaimUtils.translatedText("flan.sellFail", ChatFormatting.DARK_RED));
+//                return false;
+//            }
+//            Currency currency = OctoEconomy.getInstance().getCurrentEconomy().getCurrency(EIGHTY_ECONOMY_CURRENCY_NAME);
+//            if (currency == null) {
+//                message.accept(ClaimUtils.translatedText("flan.currencyMissing", ChatFormatting.DARK_RED));
+//                return false;
+//            }
+//            UniqueUser user = OctoEconomy.getInstance().getCurrentEconomy()
+//                    .getOrCreatePlayerAccount(player.getUUID());
+//            double price = blocks * value;
+//            user.depositMoney(currency, price, "flan.claimblocks.sell");
+//            data.setAdditionalClaims(data.getAdditionalClaims() - blocks);
+//            message.accept(ClaimUtils.translatedText("flan.sellSuccess", blocks, price, ChatFormatting.GOLD));
         }
         if (Flan.diamondCurrency) {
             PlayerClaimData data = PlayerClaimData.get(player);
@@ -72,23 +72,23 @@ public class CommandCurrencyImpl implements CommandCurrency {
         if (common != -1)
             return common == 1;
         if (Flan.octoEconomy) {
-            Currency currency = OctoEconomy.getInstance().getCurrentEconomy().getCurrency(EIGHTY_ECONOMY_CURRENCY_NAME);
-            if (currency == null) {
-                message.accept(ClaimUtils.translatedText("flan.currencyMissing", ChatFormatting.DARK_RED));
-                return false;
-            }
-            UniqueUser user = OctoEconomy.getInstance().getCurrentEconomy()
-                    .getOrCreatePlayerAccount(player.getUUID());
-            double price = Math.max(0, blocks * value);
-            if (user.getBalance(currency) >= price) {
-                PlayerClaimData data = PlayerClaimData.get(player);
-                data.setAdditionalClaims(data.getAdditionalClaims() + blocks);
-                user.withdrawMoney(currency, price, "flan.claimblocks.buy");
-                message.accept(ClaimUtils.translatedText("flan.buySuccess", blocks, price, ChatFormatting.GOLD));
-                return true;
-            }
-            message.accept(ClaimUtils.translatedText("flan.buyFail", ChatFormatting.DARK_RED));
-            return false;
+//            Currency currency = OctoEconomy.getInstance().getCurrentEconomy().getCurrency(EIGHTY_ECONOMY_CURRENCY_NAME);
+//            if (currency == null) {
+//                message.accept(ClaimUtils.translatedText("flan.currencyMissing", ChatFormatting.DARK_RED));
+//                return false;
+//            }
+//            UniqueUser user = OctoEconomy.getInstance().getCurrentEconomy()
+//                    .getOrCreatePlayerAccount(player.getUUID());
+//            double price = Math.max(0, blocks * value);
+//            if (user.getBalance(currency) >= price) {
+//                PlayerClaimData data = PlayerClaimData.get(player);
+//                data.setAdditionalClaims(data.getAdditionalClaims() + blocks);
+//                user.withdrawMoney(currency, price, "flan.claimblocks.buy");
+//                message.accept(ClaimUtils.translatedText("flan.buySuccess", blocks, price, ChatFormatting.GOLD));
+//                return true;
+//            }
+//            message.accept(ClaimUtils.translatedText("flan.buyFail", ChatFormatting.DARK_RED));
+//            return false;
         }
         if (Flan.diamondCurrency) {
             double price = Math.max(0, blocks * value);

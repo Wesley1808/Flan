@@ -24,6 +24,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
@@ -55,7 +56,7 @@ public class ServerScreenHelper {
     }
 
     public static ItemStack fromPermission(Claim claim, ServerPlayer player, ClaimPermission perm, String group) {
-        ItemStack stack = createStack(perm.getItem(), ServerScreenHelper.coloredGuiText(perm.translationKey(), ChatFormatting.GOLD));
+        ItemStack stack = createStack(perm.getItem().create(), ServerScreenHelper.coloredGuiText(perm.translationKey(), ChatFormatting.GOLD));
         List<Component> lore = new ArrayList<>();
         for (String pdesc : LanguageAPI.getFormattedKeys(player, perm.translationKeyDescription())) {
             Component trans = ServerScreenHelper.coloredGuiText(pdesc, ChatFormatting.YELLOW);
@@ -96,7 +97,7 @@ public class ServerScreenHelper {
     }
 
     public static ItemStack getFromPersonal(ServerPlayer player, ClaimPermission perm, String group) {
-        ItemStack stack = createStack(perm.getItem(), ServerScreenHelper.coloredGuiText(perm.translationKey(), ChatFormatting.GOLD));
+        ItemStack stack = createStack(perm.getItem().create(), ServerScreenHelper.coloredGuiText(perm.translationKey(), ChatFormatting.GOLD));
         List<Component> lore = new ArrayList<>();
         for (String pdesc : LanguageAPI.getFormattedKeys(player, perm.translationKeyDescription())) {
             Component trans = ServerScreenHelper.coloredGuiText(pdesc, ChatFormatting.YELLOW);
