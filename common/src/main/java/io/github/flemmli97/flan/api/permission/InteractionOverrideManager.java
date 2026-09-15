@@ -2,13 +2,16 @@ package io.github.flemmli97.flan.api.permission;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import io.github.flemmli97.flan.Flan;
 import io.github.flemmli97.flan.api.permission.interactions.InteractionType;
 import io.github.flemmli97.flan.api.permission.interactions.ResolvableEntry;
 import io.github.flemmli97.flan.api.permission.interactions.ResolvableHolderSet;
+import io.github.flemmli97.flan.mixin.SimpleJsonResourceReloadListenerAccess;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -56,7 +59,8 @@ public class InteractionOverrideManager extends SimpleJsonResourceReloadListener
     private final Map<InteractionType<?>, InteractionHolder<?>> overrides = new HashMap<>();
 
     private InteractionOverrideManager(HolderLookup.Provider provider) {
-        super(provider, InteractionEntry.CODEC, ID);
+        super(InteractionEntry.CODEC, FileToIdConverter.registry(ID));
+        ((SimpleJsonResourceReloadListenerAccess) this).setOps(provider.createSerializationContext(JsonOps.INSTANCE));
     }
 
     public static InteractionOverrideManager create(HolderLookup.Provider provider) {

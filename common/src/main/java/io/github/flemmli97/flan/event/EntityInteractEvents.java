@@ -29,7 +29,7 @@ import net.minecraft.world.entity.animal.golem.SnowGolem;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.cubemob.SulfurCube;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
@@ -161,7 +161,7 @@ public class EntityInteractEvents {
                     ((IPersistentProjectileVars) pers).setPiercedEntities(pierced);
                     ((IPersistentProjectileVars) pers).setPiercingLevel((byte) (pers.getPierceLevel() + 1));
                 }
-                proj.hurtMarked = true;
+                proj.syncVelocity = true;
                 return fail;
             }
         }
@@ -220,7 +220,7 @@ public class EntityInteractEvents {
         return true;
     }
 
-    public static boolean canEndermanInteract(EnderMan enderman, BlockPos pos) {
+    public static boolean canEndermanInteract(Enderman enderman, BlockPos pos) {
         if (enderman.level().isClientSide())
             return true;
         ClaimStorage storage = ClaimStorage.get((ServerLevel) enderman.level());

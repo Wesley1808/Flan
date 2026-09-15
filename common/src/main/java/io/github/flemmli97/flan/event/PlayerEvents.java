@@ -29,6 +29,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -39,11 +40,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableFeaturePlacerBlock;
 import net.minecraft.world.level.block.GrassBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.NetherForestVegetationConfig;
-import net.minecraft.world.level.levelgen.feature.configurations.TwistingVinesConfig;
-import net.minecraft.world.level.levelgen.feature.configurations.VegetationPatchConfiguration;
 import net.minecraft.world.phys.Vec3;
 
 public class PlayerEvents {
@@ -83,35 +79,40 @@ public class PlayerEvents {
             if (perm != null && !ClaimStorage.get(serverPlayer.level()).getForPermissionCheck(pos).canInteract(serverPlayer, perm, pos, false))
                 return false;
             int range = 0;
-            RegistryAccess registry = serverPlayer.level().registryAccess();
-            if (state.getBlock() instanceof BonemealableFeaturePlacerBlock bonemealable) {
-                VegetationPatchConfiguration cfg = featureRange(registry, ((BonemealableBlockAccess) bonemealable).getFeature(), VegetationPatchConfiguration.class);
-                if (cfg != null) {
-                    range = cfg.xzRadius().maxInclusive() + 1;
-                    pos.set(pos.getX(), pos.getY() + cfg.verticalRange() + 1, pos.getZ());
-                }
-            } else if (state.getBlock() instanceof GrassBlock) {
-                range = 4;
-            } else if (state.is(Blocks.CRIMSON_NYLIUM)) {
-                NetherForestVegetationConfig cfg = featureRange(registry, NetherFeatures.CRIMSON_FOREST_VEGETATION_BONEMEAL, NetherForestVegetationConfig.class);
-                if (cfg != null) {
-                    range = cfg.spreadWidth;
-                    pos.set(pos.getX(), pos.getY() + cfg.spreadHeight + 1, pos.getZ());
-                }
-            } else if (state.is(Blocks.WARPED_NYLIUM)) {
-                NetherForestVegetationConfig cfg = featureRange(registry, NetherFeatures.WARPED_FOREST_VEGETATION_BONEMEAL, NetherForestVegetationConfig.class);
-                NetherForestVegetationConfig cfg2 = featureRange(registry, NetherFeatures.NETHER_SPROUTS_BONEMEAL, NetherForestVegetationConfig.class);
-                TwistingVinesConfig cfg3 = featureRange(registry, NetherFeatures.TWISTING_VINES_BONEMEAL, TwistingVinesConfig.class);
-                int w1 = cfg == null ? 0 : cfg.spreadWidth;
-                int w2 = cfg2 == null ? 0 : cfg2.spreadWidth;
-                int w3 = cfg3 == null ? 0 : cfg3.spreadWidth();
-                int h1 = cfg == null ? 0 : cfg.spreadHeight;
-                int h2 = cfg2 == null ? 0 : cfg2.spreadHeight;
-                int h3 = cfg3 == null ? 0 : cfg3.spreadHeight();
-                range = Math.max(Math.max(w1, w2), w3);
-                int y = Math.max(Math.max(h1, h2), h3);
-                pos.set(pos.getX(), pos.getY() + y + 1, pos.getZ());
-            }
+
+//            TODO: Update bonemeal growing checks (if I feel like it).
+//             - The configuration for features are now part of the features themselves.
+//             - Nylium blocks combined their features into a single overlay feature. The actually needed feature data is now hidden below several feature wrappers.
+//            RegistryAccess registry = serverPlayer.level().registryAccess();
+//            if (state.getBlock() instanceof BonemealableFeaturePlacerBlock bonemealable) {
+//                VegetationPatchConfiguration cfg = featureRange(registry, ((BonemealableBlockAccess) bonemealable).getFeature(), VegetationPatchConfiguration.class);
+//                if (cfg != null) {
+//                    range = cfg.xzRadius().maxInclusive() + 1;
+//                    pos.set(pos.getX(), pos.getY() + cfg.verticalRange() + 1, pos.getZ());
+//                }
+//            } else if (state.getBlock() instanceof GrassBlock) {
+//                range = 4;
+//            } else if (state.is(Blocks.CRIMSON_NYLIUM)) {
+//                NetherForestVegetationConfig cfg = featureRange(registry, NetherFeatures.CRIMSON_FOREST_VEGETATION_BONEMEAL, NetherForestVegetationConfig.class);
+//                if (cfg != null) {
+//                    range = cfg.spreadWidth;
+//                    pos.set(pos.getX(), pos.getY() + cfg.spreadHeight + 1, pos.getZ());
+//                }
+//            } else if (state.is(Blocks.WARPED_NYLIUM)) {
+//                NetherForestVegetationConfig cfg = featureRange(registry, NetherFeatures.WARPED_FOREST_VEGETATION_BONEMEAL, NetherForestVegetationConfig.class);
+//                NetherForestVegetationConfig cfg2 = featureRange(registry, NetherFeatures.NETHER_SPROUTS_BONEMEAL, NetherForestVegetationConfig.class);
+//                TwistingVinesConfig cfg3 = featureRange(registry, NetherFeatures.TWISTING_VINES_BONEMEAL, TwistingVinesConfig.class);
+//                int w1 = cfg == null ? 0 : cfg.spreadWidth;
+//                int w2 = cfg2 == null ? 0 : cfg2.spreadWidth;
+//                int w3 = cfg3 == null ? 0 : cfg3.spreadWidth();
+//                int h1 = cfg == null ? 0 : cfg.spreadHeight;
+//                int h2 = cfg2 == null ? 0 : cfg2.spreadHeight;
+//                int h3 = cfg3 == null ? 0 : cfg3.spreadHeight();
+//                range = Math.max(Math.max(w1, w2), w3);
+//                int y = Math.max(Math.max(h1, h2), h3);
+//                pos.set(pos.getX(), pos.getY() + y + 1, pos.getZ());
+//            }
+
             if (range > 0 && perm != null && !ClaimStorage.get(serverPlayer.level()).canInteract(pos, range, serverPlayer, perm, false)) {
                 serverPlayer.sendSystemMessage(ClaimUtils.translatedText("flan.tooCloseClaim", ChatFormatting.DARK_RED), true);
                 return true;
@@ -136,14 +137,14 @@ public class PlayerEvents {
         return ClaimStorage.get(player.level()).getForPermissionCheck(pos).canInteract(player, BuiltinPermission.SCULK, pos, false);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T extends FeatureConfiguration> T featureRange(RegistryAccess registry, ResourceKey<ConfiguredFeature<?, ?>> key, Class<T> clss) {
-        return registry.get(key).map(r -> {
-            if (clss.isInstance(r.value().config()))
-                return (T) r.value().config();
-            return null;
-        }).orElse(null);
-    }
+//    @SuppressWarnings("unchecked")
+//    public static <T extends FeatureConfiguration> T featureRange(RegistryAccess registry, ResourceKey<ConfiguredFeature<?, ?>> key, Class<T> clss) {
+//        return registry.get(key).map(r -> {
+//            if (clss.isInstance(r.value().config()))
+//                return (T) r.value().config();
+//            return null;
+//        }).orElse(null);
+//    }
 
     public static boolean xpAbsorb(Player player) {
         if (player instanceof ServerPlayer) {
@@ -182,22 +183,22 @@ public class PlayerEvents {
         return true;
     }
 
-    public static boolean canDropItem(Player player, ItemStack stack) {
+    public static boolean canDropItem(ServerPlayer player, ItemStack stack) {
         PlayerDropHandler dropHandler;
-        if (!player.isDeadOrDying() && player instanceof ServerPlayer && !(dropHandler = ((PlayerDropHandler) player)).flan$forcedDropState()) {
-            ClaimStorage storage = ClaimStorage.get((ServerLevel) player.level());
+        if (!player.isDeadOrDying() && !(dropHandler = ((PlayerDropHandler) player)).flan$forcedDropState()) {
+            ClaimStorage storage = ClaimStorage.get(player.level());
             BlockPos pos = player.blockPosition();
             IPermissionContainer claim = storage.getForPermissionCheck(pos);
             boolean allow = true;
             if (claim != null) {
                 if (!(claim instanceof Claim real) || !real.allowedEntries.isAllowed(ClaimAllowListKey.ITEM_DROP, stack::is, stack::is)) {
-                    allow = claim.canInteract((ServerPlayer) player, BuiltinPermission.DROP, pos, false);
+                    allow = claim.canInteract(player, BuiltinPermission.DROP, pos, false);
                 }
             }
             if (!allow) {
                 if (player.getInventory().add(stack) && !stack.isEmpty()) {
                     dropHandler.flan$setForcedDrop(true);
-                    ItemEntity itemEntity = player.drop(stack, false);
+                    ItemEntity itemEntity = player.drop(stack, false, Prediction.SERVER_ONLY);
                     dropHandler.flan$setForcedDrop(false);
                     if (itemEntity != null) {
                         itemEntity.setNoPickUpDelay();
@@ -209,7 +210,7 @@ public class PlayerEvents {
                     ItemStack itemStack2 = player.containerMenu.slots.get(j).getItem();
                     stacks.add(itemStack2.isEmpty() ? ItemStack.EMPTY : itemStack2);
                 }
-                ((ServerPlayer) player).connection.send(new ClientboundContainerSetContentPacket(player.containerMenu.containerId, 0, stacks, player.inventoryMenu.getCarried()));
+                player.connection.send(new ClientboundContainerSetContentPacket(player.containerMenu.containerId, 0, stacks, player.inventoryMenu.getCarried()));
             }
             return allow;
         }

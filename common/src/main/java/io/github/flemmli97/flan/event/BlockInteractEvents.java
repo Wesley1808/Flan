@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignTextSlot;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
@@ -175,7 +176,7 @@ public class BlockInteractEvents {
 
     private static void executeSignCommand(BlockEntity blockEntity, BlockPos pos, ServerPlayer player) {
         if (blockEntity instanceof SignBlockEntity sign)
-            sign.executeClickCommandsIfPresent(player.level(), player, pos, sign.isFacingFrontText(player));
+            sign.executeClickCommandsIfPresent(player.level(), player, pos, sign.getSlotPlayerIsFacing(player));
     }
 
     public static boolean contains(Identifier id, BlockEntity blockEntity, List<String> idList, List<String> tagList) {
